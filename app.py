@@ -83,4 +83,4 @@ st.divider()
 if relacao_ltv_cac >= 3:
     st.success(f"🌟 **Excelente Saúde Financeira!** O retorno do cliente é de {relacao_ltv_cac:.1f}x o seu custo. O payback ocorre em aproximadamente {payback:.1f} meses.")
 else:
-    st.warning(f"⚠️ **Atenção:** O CAC está elevado. O payback de {payback:.1f} meses pode impactar o fluxo de caixa a curto prazo.")
+    st.warning(f"⚠️ **Atenção:** O CAC está elevado. O payback de {payback:.1f} meses pode impactar o fluxo de caixa a curto prazo.") 
