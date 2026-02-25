@@ -3,17 +3,10 @@ import streamlit as st
 # Configuração da página
 st.set_page_config(page_title="Eskolare | Calculadora de CAC e LTV", layout="wide")
 
-# CSS Mágico: Adiciona bordas aos cards sem quebrar as cores do texto
+# CSS apenas para esconder o rodapé, sem mexer em cores!
 st.markdown("""
     <style>
-    div[data-testid="metric-container"] {
-        border: 1px solid rgba(128, 128, 128, 0.3); /* Borda cinza suave */
-        padding: 15px 20px; /* Espaço interno */
-        border-radius: 8px; /* Cantos arredondados */
-        border-left: 5px solid #2ecc71; /* Detalhe verde na lateral para dar charme */
-        box-shadow: 0 4px 6px rgba(0,0,0,0.1); /* Sombra leve */
-    }
-    footer {visibility: hidden;} /* Esconde o rodapé */
+    footer {visibility: hidden;}
     </style>
     """, unsafe_allow_html=True)
 
@@ -66,7 +59,7 @@ with col2:
     st.info("Preencha os resultados **do mesmo mês**.")
     novas = st.number_input("Novas Escolas Fechadas (No Mês)", value=5, min_value=1, help="Total de contratos assinados neste mesmo mês.")
     ticket = st.number_input("Ticket Médio Mensal por Escola (R$)", value=1200.0, help="Receita média que UMA escola gera por mês.")
-    retencao = st.slider("Meses de Retenção Estimados (Total)", 12, 120, 36, help="Tempo total que a escola deve ficar na base da Eskolare.")
+    retencao = st.slider("Meses de Retenção Estimados (Total)", 12, 120, 24, help="Tempo total que a escola deve ficar na base da Eskolare.")
 
 # Cálculos Lógicos
 investimento_total = mkt + ops + pessoal
@@ -77,13 +70,29 @@ payback = cac / ticket
 
 st.divider()
 
-# Exibição das Métricas Principais
+# --- EXIBIÇÃO DAS MÉTRICAS COM BORDAS NATIVAS ---
+st.subheader("📊 Resultados da Operação")
 m_col1, m_col2, m_col3, m_col4 = st.columns(4)
 
-m_col1.metric("Invest. Total (Mensal)", f"R$ {investimento_total:,.2f}")
-m_col2.metric("CAC", f"R$ {cac:,.2f}")
-m_col3.metric("LTV Estimado", f"R$ {ltv:,.2f}")
-m_col4.metric("LTV / CAC", f"{relacao_ltv_cac:.1f}x")
+# Usando st.container(border=True) para criar o card perfeito
+with m_col1:
+    with st.container(border=True):
+        st.metric("Invest. Total (Mensal)", f"R$ {investimento_total:,.2f}")
+
+with m_col2:
+    with st.container(border=True):
+        st.metric("CAC", f"R$ {cac:,.2f}")
+
+with m_col3:
+    with st.container(border=True):
+        st.metric("LTV Estimado", f"R$ {ltv:,.2f}")
+
+with m_col4:
+    with st.container(border=True):
+        # Usando a funcionalidade 'delta' para adicionar cor (Verde/Vermelho) de forma legível
+        status_texto = "Saudável" if relacao_ltv_cac >= 3 else "Risco"
+        cor_status = "normal" if relacao_ltv_cac >= 3 else "inverse"
+        st.metric("LTV / CAC", f"{relacao_ltv_cac:.1f}x", delta=status_texto, delta_color=cor_status)
 
 st.divider()
 
