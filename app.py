@@ -3,14 +3,10 @@ import streamlit as st
 # Configuração da página
 st.set_page_config(page_title="Eskolare | Calculadora de CAC e LTV", layout="wide")
 
-# CSS para esconder o rodapé nativo e dar destaque ao campo principal
+# CSS para esconder o rodapé nativo
 st.markdown("""
     <style>
     footer {visibility: hidden;}
-    /* Destaca sutilmente a caixa de texto principal */
-    div[data-baseweb="input"] {
-        border-radius: 6px;
-    }
     </style>
     """, unsafe_allow_html=True)
 
@@ -20,7 +16,7 @@ with st.sidebar:
     
     st.subheader("📖 Glossário de Indicadores")
     with st.expander("O que é CAC?"):
-        st.write("Custo de Aquisição de Cliente. É o quanto você gasta (Marketing + Vendas + Operação) para trazer uma nova escola.")
+        st.write("Custo de Aquisição de Cliente. É o quanto você gasta (Eventos + Vendas + Operação) para trazer uma nova escola.")
     
     with st.expander("O que é LTV?"):
         st.write("Lifetime Value. O faturamento total que UMA escola gera para a Eskolare (Transação + Mensalidade) durante todo o tempo de contrato.")
@@ -51,11 +47,14 @@ col1, col2 = st.columns(2)
 
 with col1:
     st.subheader("💰 Custos da Operação")
-    st.info("Preencha o que foi gasto **no mês** (Rateie custos anuais).")
+    st.info("Preencha os gastos (O sistema fará o rateio mensal automático).")
     
-    # Destaque visual para o Custo da Ação/Evento
-    st.markdown("🎯 **Variável Principal de Marketing**")
-    mkt = st.number_input("Custo da Ação ou Evento (Rateio Mensal - R$)", value=5000.0)
+    # Destaque visual verde seguro para a Ação Principal
+    st.markdown("<h4 style='color: #2ecc71;'>🟢 Custo da Ação ou Evento</h4>", unsafe_allow_html=True)
+    mkt_anual = st.number_input("Valor TOTAL gasto no ANO (R$)", value=60000.0, step=5000.0, help="Insira o custo total da ação no ano. O sistema dividirá por 12 automaticamente.")
+    
+    # Matemática do rateio invisível
+    mkt_mensal = mkt_anual / 12.0
     
     st.markdown("---")
     ops = st.number_input("Custos Extras (Mensal em R$)", value=2000.0)
@@ -78,7 +77,7 @@ with col2:
     retencao = st.slider("Meses de Retenção Estimados (Total)", 12, 120, 24, help="Na dúvida, considere o tempo de contrato.")
 
 # --- LÓGICA DE CÁLCULO (O MOTOR COM PRECISÃO MÁXIMA) ---
-investimento_total = mkt + ops + pessoal
+investimento_total = mkt_mensal + ops + pessoal
 cac = investimento_total / novas
 
 # 1. Receita de Transação (Take Rate)
@@ -97,7 +96,7 @@ payback = cac / receita_mensal_eskolare
 
 st.divider()
 
-# --- EXIBIÇÃO DAS MÉTRICAS (AGORA COM 5 CARDS) ---
+# --- EXIBIÇÃO DAS MÉTRICAS ---
 st.subheader("📊 Resultados da Operação")
 m_col1, m_col2, m_col3, m_col4, m_col5 = st.columns(5)
 
@@ -111,7 +110,6 @@ with m_col2:
 
 with m_col3:
     with st.container(border=True):
-        # Novo Card: MRR Estimado
         st.metric("MRR Estimado", f"R$ {receita_mensal_eskolare:,.2f}")
 
 with m_col4:
