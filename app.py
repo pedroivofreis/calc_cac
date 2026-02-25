@@ -62,7 +62,7 @@ with col2:
     # Sub-colunas para as taxas
     c_taxa1, c_taxa2 = st.columns(2)
     with c_taxa1:
-        take_rate = st.number_input("Take Rate Efetivo (%)", value=0.071, step=0.1, help="Porcentagem que fica com a Eskolare.")
+        take_rate = st.number_input("Take Rate Efetivo (%)", value=0.71, step=0.1, help="Porcentagem que fica com a Eskolare.")
     with c_taxa2:
         mensalidade = st.number_input("Mensalidade Fixa (R$)", value=99.0, step=10.0, help="Assinatura mensal do sistema.")
         
