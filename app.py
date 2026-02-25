@@ -3,10 +3,22 @@ import streamlit as st
 # Configuração da página
 st.set_page_config(page_title="Eskolare | Calculadora de CAC e LTV", layout="wide")
 
-# CSS para esconder o rodapé nativo
+# CSS para esconder o rodapé e aplicar a MÁGICA DA RESPONSIVIDADE
 st.markdown("""
     <style>
     footer {visibility: hidden;}
+    
+    /* Faz a fonte do número (Valor) encolher e crescer como um elástico */
+    div[data-testid="stMetricValue"] > div {
+        font-size: clamp(1.2rem, 2vw, 2.2rem) !important;
+    }
+    
+    /* Faz a fonte do título (Label) encolher e quebrar a linha se precisar */
+    div[data-testid="stMetricLabel"] > div {
+        font-size: clamp(0.75rem, 1vw, 1rem) !important;
+        white-space: normal !important;
+        word-wrap: break-word !important;
+    }
     </style>
     """, unsafe_allow_html=True)
 
