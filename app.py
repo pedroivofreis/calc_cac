@@ -1,55 +1,86 @@
 import streamlit as st
 
-st.set_page_config(page_title="Calculadora Eskolare: CAC & LTV", layout="wide")
+# Configuração da página
+st.set_page_config(page_title="Eskolare | Calculadora de CAC e LTV", layout="wide")
 
-st.title("📊 Calculadora de Viabilidade Comercial (CAC/LTV)")
-st.markdown("---")
+# Estilos para melhorar a interface
+st.markdown("""
+    <style>
+    .main { background-color: #f8f9fa; }
+    .stMetric { background-color: #ffffff; padding: 20px; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+    </style>
+    """, unsafe_allow_html=True)
 
-# Sidebar para Inputs
-st.sidebar.header("📥 Parâmetros de Custo")
-custo_marketing = st.sidebar.number_input("Custo de Marketing (R$)", value=10000)
-custo_operacional = st.sidebar.number_input("Custo Operacional/Ferramentas (R$)", value=5000)
-custo_time = st.sidebar.number_input("Custo do Time (Salários/Comissões) (R$)", value=25000)
+# --- BARRA LATERAL (SIDEBAR) ---
+with st.sidebar:
+    st.title("🚀 Navegação e Apoio")
+    
+    st.subheader("📖 Glossário de Indicadores")
+    with st.expander("O que é CAC?"):
+        st.write("Custo de Aquisição de Cliente. É o quanto você gasta (Marketing + Vendas) para trazer uma nova escola.")
+    
+    with st.expander("O que é LTV?"):
+        st.write("Lifetime Value. O faturamento total bruto que uma escola gera durante todo o tempo de contrato.")
+        
+    with st.expander("O que é Payback?"):
+        st.write("Tempo de Retorno. Quantos meses a escola precisa pagar para 'se pagar'.")
 
-st.sidebar.header("🎯 Resultados do Período")
-novas_escolas = st.sidebar.number_input("Quantidade de Novas Escolas Fechadas", value=5, min_value=1)
+    st.divider()
+    
+    # --- DISCLAIMER LEGAL ---
+    st.subheader("⚖️ Disclaimer")
+    st.caption("""
+    Os cálculos apresentados são estimativas baseadas em entradas manuais e médias de mercado de 2026. 
+    Este relatório não constitui garantia de faturamento ou lucro futuro.
+    """)
 
-st.sidebar.header("💰 Perfil da Escola (LTV)")
-ticket_medio = st.sidebar.number_input("Ticket Médio Mensal por Escola (R$)", value=1000)
-tempo_retencao = st.sidebar.slider("Tempo de Retenção Médio (Meses)", 1, 120, 36) # 36 meses = 3 anos
+    st.divider()
 
-# Cálculos
-custo_total = custo_marketing + custo_operacional + custo_time
-cac = custo_total / novas_escolas
-ltv = ticket_medio * tempo_retencao
-relacao_ltv_cac = ltv / cac
-payback = cac / ticket_medio
+    # --- SUA ASSINATURA ---
+    st.markdown("### ✍️ Autoria")
+    st.success("**Criado por Pedro Reis**")
+    st.caption("Estrategista de Negócios | Eskolare 2026")
 
-# Exibição dos Resultados
-col1, col2, col3 = st.columns(3)
+# --- CONTEÚDO PRINCIPAL ---
+st.title("📊 Calculadora Comercial de CAC e LTV")
+st.write("Utilize esta ferramenta para medir a viabilidade econômica das prospecções.")
+
+# Divisão de Colunas para Inputs
+col1, col2 = st.columns(2)
 
 with col1:
-    st.metric("CAC (Custo por Escola)", f"R$ {cac:,.2f}")
-    st.caption("Quanto custa conquistar UMA escola.")
+    st.subheader("💰 Custos Mensais")
+    mkt = st.number_input("Custo de Marketing (R$)", value=5000.0, help="Valor total gasto em anúncios e eventos no MÊS.")
+    ops = st.number_input("Custo Operacional (R$)", value=2000.0, help="Softwares e ferramentas utilizadas pelo time no MÊS.")
+    pessoal = st.number_input("Custo de Time (R$)", value=15000.0, help="Soma de salários e comissões do time de vendas no MÊS.")
 
 with col2:
-    st.metric("LTV (Valor do Cliente)", f"R$ {ltv:,.2f}")
-    st.caption("Quanto essa escola traz de receita no ciclo total.")
+    st.subheader("📈 Performance")
+    novas = st.number_input("Novas Escolas Fechadas", value=5, min_value=1, help="Total de contratos assinados no MÊS.")
+    ticket = st.number_input("Ticket Médio Mensal (R$)", value=1200.0, help="Receita média mensal gerada por UMA escola.")
+    retencao = st.slider("Meses de Retenção Estimados", 12, 120, 36, help="Tempo total que a escola deve ficar na base (ANUAL).")
 
-with col3:
-    color = "normal" if relacao_ltv_cac >= 3 else "inverse"
-    st.metric("LTV / CAC", f"{relacao_ltv_cac:.2f}x", delta=None, delta_color=color)
-    st.caption("Saúde do negócio (Ideal > 3x).")
+# Cálculos Lógicos
+investimento_total = mkt + ops + pessoal
+cac = investimento_total / novas
+ltv = ticket * retencao
+relacao_ltv_cac = ltv / cac
+payback = cac / ticket
 
-st.markdown("---")
+st.divider()
 
-# Insights Estratégicos
-st.subheader("💡 Análise de Viabilidade")
-if payback <= 6:
-    st.success(f"Excelente! Você recupera o investimento em {payback:.1f} meses.")
-elif payback <= 12:
-    st.warning(f"Atenção: O payback é de {payback:.1f} meses. Considere otimizar os custos de time.")
+# Exibição das Métricas Principais
+m_col1, m_col2, m_col3, m_col4 = st.columns(4)
+
+m_col1.metric("Investimento Total", f"R$ {investimento_total:,.2f}")
+m_col2.metric("CAC", f"R$ {cac:,.2f}")
+m_col3.metric("LTV Estimado", f"R$ {ltv:,.2f}")
+m_col4.metric("LTV / CAC", f"{relacao_ltv_cac:.1f}x")
+
+st.divider()
+
+# Alerta de Viabilidade
+if relacao_ltv_cac >= 3:
+    st.success(f"🌟 **Excelente Saúde Financeira!** O retorno do cliente é de {relacao_ltv_cac:.1f}x o seu custo. O payback ocorre em aproximadamente {payback:.1f} meses.")
 else:
-    st.error(f"Risco: O payback de {payback:.1f} meses é muito longo para o mercado atual.")
-
-st.info(f"O Custo Total da sua operação no período foi de R$ {custo_total:,.2f}")
+    st.warning(f"⚠️ **Atenção:** O CAC está elevado. O payback de {payback:.1f} meses pode impactar o fluxo de caixa a curto prazo.")
