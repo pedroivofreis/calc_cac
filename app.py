@@ -3,11 +3,40 @@ import streamlit as st
 # Configuração da página
 st.set_page_config(page_title="Eskolare | Calculadora de CAC e LTV", layout="wide")
 
-# Estilos para melhorar a interface
+# Estilos para melhorar a interface e arrumar os Scorecards
 st.markdown("""
     <style>
-    .main { background-color: #f8f9fa; }
-    .stMetric { background-color: #ffffff; padding: 20px; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+    /* Força a cor de fundo do app */
+    .stApp {
+        background-color: #f4f6f9;
+    }
+    
+    /* Estilização dos Cards (Scorecards) */
+    div[data-testid="metric-container"] {
+        background-color: #ffffff !important;
+        border: 1px solid #e0e0e0;
+        padding: 15px 20px;
+        border-radius: 10px;
+        border-left: 6px solid #2ecc71; /* Detalhe verde na lateral */
+        box-shadow: 2px 4px 10px rgba(0,0,0,0.05);
+    }
+
+    /* Cor do Rótulo/Título da métrica */
+    div[data-testid="metric-container"] label {
+        color: #6b7280 !important; /* Cinza legível */
+        font-size: 15px !important;
+        font-weight: 600 !important;
+    }
+
+    /* Cor do Valor Numérico da métrica */
+    div[data-testid="metric-container"] div[data-testid="stMetricValue"] > div {
+        color: #1e3a8a !important; /* Azul escuro super legível */
+        font-size: 30px !important;
+        font-weight: 800 !important;
+    }
+    
+    /* Esconde o rodapé padrão do Streamlit */
+    footer {visibility: hidden;}
     </style>
     """, unsafe_allow_html=True)
 
@@ -83,4 +112,4 @@ st.divider()
 if relacao_ltv_cac >= 3:
     st.success(f"🌟 **Excelente Saúde Financeira!** O retorno do cliente é de {relacao_ltv_cac:.1f}x o seu custo. O payback ocorre em aproximadamente {payback:.1f} meses.")
 else:
-    st.warning(f"⚠️ **Atenção:** O CAC está elevado. O payback de {payback:.1f} meses pode impactar o fluxo de caixa a curto prazo.") 
+    st.warning(f"⚠️ **Atenção:** O CAC está elevado. O payback de {payback:.1f} meses pode impactar o fluxo de caixa a curto prazo.")
