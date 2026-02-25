@@ -102,7 +102,7 @@ with m_col2:
 
 with m_col3:
     with st.container(border=True):
-        st.metric("LTV por Escola", f"R$ {ltv:,.2f}")
+        st.metric("LTV (Por Escola)", f"R$ {ltv:,.2f}")
 
 with m_col4:
     with st.container(border=True):
