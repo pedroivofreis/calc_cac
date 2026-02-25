@@ -3,10 +3,17 @@ import streamlit as st
 # Configuração da página
 st.set_page_config(page_title="Eskolare | Calculadora de CAC e LTV", layout="wide")
 
-# Remove apenas o rodapé padrão, sem mexer nas cores dos cards
+# CSS Mágico: Adiciona bordas aos cards sem quebrar as cores do texto
 st.markdown("""
     <style>
-    footer {visibility: hidden;}
+    div[data-testid="metric-container"] {
+        border: 1px solid rgba(128, 128, 128, 0.3); /* Borda cinza suave */
+        padding: 15px 20px; /* Espaço interno */
+        border-radius: 8px; /* Cantos arredondados */
+        border-left: 5px solid #2ecc71; /* Detalhe verde na lateral para dar charme */
+        box-shadow: 0 4px 6px rgba(0,0,0,0.1); /* Sombra leve */
+    }
+    footer {visibility: hidden;} /* Esconde o rodapé */
     </style>
     """, unsafe_allow_html=True)
 
@@ -42,22 +49,24 @@ with st.sidebar:
 
 # --- CONTEÚDO PRINCIPAL ---
 st.title("📊 Calculadora Comercial de CAC e LTV")
-st.write("Utilize esta ferramenta para medir a viabilidade econômica das prospecções.")
+st.write("Utilize esta ferramenta para medir a viabilidade econômica das prospecções. **Todos os custos e entradas devem refletir o período de 1 MÊS.**")
 
 # Divisão de Colunas para Inputs
 col1, col2 = st.columns(2)
 
 with col1:
-    st.subheader("💰 Custos Mensais")
-    mkt = st.number_input("Custo de Marketing (R$)", value=5000.0, help="Valor total gasto em anúncios e eventos no MÊS.")
-    ops = st.number_input("Custo Operacional (R$)", value=2000.0, help="Softwares e ferramentas utilizadas pelo time no MÊS.")
-    pessoal = st.number_input("Custo de Time (R$)", value=15000.0, help="Soma de salários e comissões do time de vendas no MÊS.")
+    st.subheader("💰 Custos da Operação")
+    st.info("Preencha o que foi gasto **no mês**.")
+    mkt = st.number_input("Custo de Marketing (Mensal em R$)", value=5000.0, help="Valor gasto em anúncios, eventos, brindes, etc. durante 1 mês.")
+    ops = st.number_input("Custo Operacional (Mensal em R$)", value=2000.0, help="Softwares, viagens e ferramentas utilizadas pelo time durante 1 mês.")
+    pessoal = st.number_input("Custo do Time (Mensal em R$)", value=15000.0, help="Soma de salários e comissões do time de vendas pagos no mês.")
 
 with col2:
     st.subheader("📈 Performance")
-    novas = st.number_input("Novas Escolas Fechadas", value=5, min_value=1, help="Total de contratos assinados no MÊS.")
-    ticket = st.number_input("Ticket Médio Mensal (R$)", value=1200.0, help="Receita média mensal gerada por UMA escola.")
-    retencao = st.slider("Meses de Retenção Estimados", 12, 120, 36, help="Tempo total que a escola deve ficar na base (ANUAL).")
+    st.info("Preencha os resultados **do mesmo mês**.")
+    novas = st.number_input("Novas Escolas Fechadas (No Mês)", value=5, min_value=1, help="Total de contratos assinados neste mesmo mês.")
+    ticket = st.number_input("Ticket Médio Mensal por Escola (R$)", value=1200.0, help="Receita média que UMA escola gera por mês.")
+    retencao = st.slider("Meses de Retenção Estimados (Total)", 12, 120, 36, help="Tempo total que a escola deve ficar na base da Eskolare.")
 
 # Cálculos Lógicos
 investimento_total = mkt + ops + pessoal
@@ -71,7 +80,7 @@ st.divider()
 # Exibição das Métricas Principais
 m_col1, m_col2, m_col3, m_col4 = st.columns(4)
 
-m_col1.metric("Investimento Total", f"R$ {investimento_total:,.2f}")
+m_col1.metric("Invest. Total (Mensal)", f"R$ {investimento_total:,.2f}")
 m_col2.metric("CAC", f"R$ {cac:,.2f}")
 m_col3.metric("LTV Estimado", f"R$ {ltv:,.2f}")
 m_col4.metric("LTV / CAC", f"{relacao_ltv_cac:.1f}x")
