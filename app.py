@@ -48,9 +48,9 @@ col1, col2 = st.columns(2)
 with col1:
     st.subheader("💰 Custos da Operação")
     st.info("Preencha o que foi gasto **no mês**.")
-    mkt = st.number_input("Custo de Marketing (Mensal em R$)", value=5000.0)
-    ops = st.number_input("Custo Operacional (Mensal em R$)", value=2000.0)
-    pessoal = st.number_input("Custo do Time (Mensal em R$)", value=15000.0)
+    mkt = st.number_input("Custo da Ação ou Evento (Mensal em R$)", value=5000.0)
+    ops = st.number_input("Custos Extras (Mensal em R$)", value=2000.0)
+    pessoal = st.number_input("Custo do Time (Mensal em R$)", value=28000.0)
 
 with col2:
     st.subheader("📈 Modelo de Receita (Por Escola)")
@@ -62,11 +62,11 @@ with col2:
     # Sub-colunas para as taxas
     c_taxa1, c_taxa2 = st.columns(2)
     with c_taxa1:
-        take_rate = st.number_input("Take Rate Efetivo (%)", value=3.2, step=0.1, help="Porcentagem que fica com a Eskolare.")
+        take_rate = st.number_input("Take Rate Efetivo (%)", value=0.071, step=0.1, help="Porcentagem que fica com a Eskolare.")
     with c_taxa2:
-        mensalidade = st.number_input("Mensalidade Fixa (R$)", value=150.0, step=10.0, help="Assinatura mensal do sistema.")
+        mensalidade = st.number_input("Mensalidade Fixa (R$)", value=99.0, step=10.0, help="Assinatura mensal do sistema.")
         
-    retencao = st.slider("Meses de Retenção Estimados (Total)", 12, 120, 36)
+    retencao = st.slider("Meses de Retenção Estimados (Total)", 12, 120, 24, help="Na dúvida, considere o tempo de contrato.")
 
 # --- LÓGICA DE CÁLCULO (O MOTOR) ---
 investimento_total = mkt + ops + pessoal
