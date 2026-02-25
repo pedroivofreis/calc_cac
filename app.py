@@ -75,4 +75,4 @@ st.divider()
 if relacao >= 3:
     st.success(f"✅ **Operação Saudável:** Payback em {payback:.1f} meses.")
 else:
-    st.error(f"⚠️ **Atenção:** CAC alto. Payback em {payback:.1f} meses.")
+    st.error(f"⚠️ **Atenção:** CAC alto. Payback em {payback:.1f} meses.") 
