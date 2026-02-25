@@ -1,78 +1,86 @@
 import streamlit as st
 
-st.set_page_config(page_title="Eskolare | Inteligência de Mercado", layout="wide")
+# Configuração da página
+st.set_page_config(page_title="Eskolare | Calculadora de CAC e LTV", layout="wide")
 
-# --- ESTILIZAÇÃO CUSTOMIZADA ---
+# Estilos para melhorar a interface
 st.markdown("""
     <style>
-    .main { background-color: #f5f7f9; }
-    .stMetric { background-color: #ffffff; padding: 15px; border-radius: 10px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
-    footer {visibility: hidden;}
+    .main { background-color: #f8f9fa; }
+    .stMetric { background-color: #ffffff; padding: 20px; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
     </style>
     """, unsafe_allow_html=True)
 
-# --- SIDEBAR: GLOSSÁRIO E CRÉDITOS ---
+# --- BARRA LATERAL (SIDEBAR) ---
 with st.sidebar:
-    st.image("https://via.placeholder.com/150x50?text=ESKOLARE", width=150)
-    st.title("📖 Glossário de Apoio")
+    st.title("🚀 Navegação e Apoio")
     
+    st.subheader("📖 Glossário de Indicadores")
     with st.expander("O que é CAC?"):
-        st.write("Custo de Aquisição de Cliente (Total Investido / Novos Contratos).")
-        
+        st.write("Custo de Aquisição de Cliente. É o quanto você gasta (Marketing + Vendas) para trazer uma nova escola.")
+    
     with st.expander("O que é LTV?"):
-        st.write("Lifetime Value (Ticket Mensal x Meses de Retenção).")
-
+        st.write("Lifetime Value. O faturamento total bruto que uma escola gera durante todo o tempo de contrato.")
+        
     with st.expander("O que é Payback?"):
-        st.write("Tempo necessário para a receita da escola cobrir o custo de aquisição.")
-    
+        st.write("Tempo de Retorno. Quantos meses a escola precisa pagar para 'se pagar'.")
+
     st.divider()
     
-    # --- SUA ASSINATURA AQUI ---
-    st.markdown("### 👨‍💻 Créditos")
-    st.info("**Desenvolvido por Pedro Reis**")
-    st.caption("Inteligência de Mercado & Estratégia")
-    
+    # --- DISCLAIMER LEGAL ---
+    st.subheader("⚖️ Disclaimer")
+    st.caption("""
+    Os cálculos apresentados são estimativas baseadas em entradas manuais e médias de mercado de 2026. 
+    Este relatório não constitui garantia de faturamento ou lucro futuro.
+    """)
+
     st.divider()
-    st.caption("⚠️ **Disclaimer:** Ferramenta de simulação baseada em dados históricos de 2026.")
 
-# --- ÁREA PRINCIPAL ---
-st.title("📊 Calculadora de Viabilidade Comercial")
-st.markdown("Análise de eficiência para expansão nas regiões Norte e Nordeste.")
+    # --- SUA ASSINATURA ---
+    st.markdown("### ✍️ Autoria")
+    st.success("**Criado por Pedro Reis**")
+    st.caption("Estrategista de Negócios | Eskolare 2026")
 
-col_in1, col_in2 = st.columns(2)
+# --- CONTEÚDO PRINCIPAL ---
+st.title("📊 Calculadora Comercial de CAC e LTV")
+st.write("Utilize esta ferramenta para medir a viabilidade econômica das prospecções.")
 
-with col_in1:
-    st.subheader("🛠️ Custos da Operação (Mês)")
-    mkt = st.number_input("Investimento em Marketing (R$)", value=5000.0)
-    ops = st.number_input("Custos Operacionais (R$)", value=2000.0)
-    time = st.number_input("Custo de Pessoal (R$)", value=15000.0)
+# Divisão de Colunas para Inputs
+col1, col2 = st.columns(2)
 
-with col_in2:
-    st.subheader("🎯 Performance e Receita")
-    novos = st.number_input("Novas Escolas Fechadas (Mês)", value=2, min_value=1)
-    ticket = st.number_input("Ticket Médio Mensal (R$)", value=1200.0)
-    meses = st.slider("Expectativa de Retenção (Meses)", 6, 120, 36)
+with col1:
+    st.subheader("💰 Custos Mensais")
+    mkt = st.number_input("Custo de Marketing (R$)", value=5000.0, help="Valor total gasto em anúncios e eventos no MÊS.")
+    ops = st.number_input("Custo Operacional (R$)", value=2000.0, help="Softwares e ferramentas utilizadas pelo time no MÊS.")
+    pessoal = st.number_input("Custo de Time (R$)", value=15000.0, help="Soma de salários e comissões do time de vendas no MÊS.")
 
-st.divider()
+with col2:
+    st.subheader("📈 Performance")
+    novas = st.number_input("Novas Escolas Fechadas", value=5, min_value=1, help="Total de contratos assinados no MÊS.")
+    ticket = st.number_input("Ticket Médio Mensal (R$)", value=1200.0, help="Receita média mensal gerada por UMA escola.")
+    retencao = st.slider("Meses de Retenção Estimados", 12, 120, 36, help="Tempo total que a escola deve ficar na base (ANUAL).")
 
-# Cálculos
-custo_total = mkt + ops + time
-cac = custo_total / novos
-ltv_total = ticket * meses
-relacao = ltv_total / cac
+# Cálculos Lógicos
+investimento_total = mkt + ops + pessoal
+cac = investimento_total / novas
+ltv = ticket * retencao
+relacao_ltv_cac = ltv / cac
 payback = cac / ticket
 
-# Métricas
-c1, c2, c3, c4 = st.columns(4)
-c1.metric("Investimento Total", f"R$ {custo_total:,.2f}")
-c2.metric("CAC", f"R$ {cac:,.2f}")
-c3.metric("LTV Estimado", f"R$ {ltv_total:,.2f}")
-c4.metric("LTV / CAC", f"{relacao:.1f}x")
+st.divider()
+
+# Exibição das Métricas Principais
+m_col1, m_col2, m_col3, m_col4 = st.columns(4)
+
+m_col1.metric("Investimento Total", f"R$ {investimento_total:,.2f}")
+m_col2.metric("CAC", f"R$ {cac:,.2f}")
+m_col3.metric("LTV Estimado", f"R$ {ltv:,.2f}")
+m_col4.metric("LTV / CAC", f"{relacao_ltv_cac:.1f}x")
 
 st.divider()
 
-# Análise
-if relacao >= 3:
-    st.success(f"✅ **Operação Saudável:** Payback em {payback:.1f} meses.")
+# Alerta de Viabilidade
+if relacao_ltv_cac >= 3:
+    st.success(f"🌟 **Excelente Saúde Financeira!** O retorno do cliente é de {relacao_ltv_cac:.1f}x o seu custo. O payback ocorre em aproximadamente {payback:.1f} meses.")
 else:
-    st.error(f"⚠️ **Atenção:** CAC alto. Payback em {payback:.1f} meses.") 
+    st.warning(f"⚠️ **Atenção:** O CAC está elevado. O payback de {payback:.1f} meses pode impactar o fluxo de caixa a curto prazo.")
